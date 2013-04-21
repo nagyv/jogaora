@@ -17,7 +17,7 @@ class Participant(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('participant', (), {'pk': self.pk})
+        return ('participants', (), {'pk': self.pk})
 
 
 class Session(models.Model):
@@ -31,7 +31,7 @@ class Session(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('session', (), {'pk': self.pk})
+        return ('sessions', (), {'pk': self.pk})
 
     def participant_add(self, participant, paid=None):
         return SessionParticipant.objects.create(
@@ -52,7 +52,7 @@ class SeasonTicket(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('season_ticket', (), {'pk': self.pk})
+        return ('season_tickets', (), {'pk': self.pk})
 
 
 class SessionParticipant(models.Model):
