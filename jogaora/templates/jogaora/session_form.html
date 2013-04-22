@@ -1,0 +1,6 @@
+{% load url from future %}
+<form action="{% url "sessions"%}" method="post">
+{% csrf_token %}
+{{form}}
+<button type="submit">Save</button>
+</form>

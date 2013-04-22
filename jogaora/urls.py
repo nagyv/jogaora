@@ -1,10 +1,14 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
+from .views import CreateParticipant, CreateSession, CreateSeasonTicket, \
+    AddParticipantToSession, ListSession#, ShowSession
 
-urlpatterns = patterns('',
-    url(r'^participants/$', lambda: '', name='participants'),
-    url(r'^participants/(?P<pk>\d+)/$', lambda: '', name='participants'),
-    url(r'^sessions/$', lambda: '', name='sessions'),
-    url(r'^sessions/(?P<pk>\d+)/$', lambda: '', name='sessions'),
-    url(r'^season_tickets/$', lambda: '', name='season_tickets'),
-    url(r'^season_tickets/(?P<pk>\d+)/$', lambda: '', name='season_tickets'),
+urlpatterns = patterns(
+    '',
+    url(r'^$', ListSession.as_view(), name='sessions'),
+    url(r'^new/$', CreateSession.as_view(), name='add_session'),
+    # TODO: write this: url(r'^(?P<pk>\d+)/$', ShowSession.as_view(), name='sessions'),
+    url(r'^(?P<pk>\d+)/$', lambda: '', name='sessions'),
+    url(r'^(?P<pk>\d+)/add/$', AddParticipantToSession.as_view(), name='session_add_participant'),
+    url(r'^participants/$', CreateParticipant.as_view(), name='participants'),
+    url(r'^season_tickets/$', CreateSeasonTicket, name='season_tickets'),
 )
