@@ -1,0 +1,7 @@
+{% load url from future %}
+<form action="{% url "session_add_participant" pk=session.pk %}" method="post">
+{% csrf_token %}
+{{form}}
+<button type="submit">Save</button>
+</form>
+<a href="{% url "participants" %}">Add participant</a>

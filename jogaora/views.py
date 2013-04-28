@@ -42,9 +42,16 @@ class APIListSession(ListAPIView):
 
 class AddParticipantToSession(FormView):
     # TODO extra: Try to write this
-    template_name = 'participant_to_session.html'
+    template_name = 'jogaora/participant_to_session.html'
     form_class = ParticipantListForm
 
+    def get_initial(self):
+        return {'session': Session.objects.get(**self.kwargs)}
+
+    def get_context_data(self, form):
+        ctx = super(AddParticipantToSession, self).get_context_data(form=form)
+        ctx['session'] = Session.objects.get(**self.kwargs)
+        return ctx
 
 class CreateSeasonTicket(CreateView):
     model = SeasonTicket

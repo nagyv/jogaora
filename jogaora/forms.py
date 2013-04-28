@@ -15,7 +15,7 @@ class ParticipantListForm(forms.Form):
         queryset=Session.objects.all(),
         widget=forms.HiddenInput
     )
-    participants = forms.ModelChoiceField(
+    participant = forms.ModelChoiceField(
         queryset=Participant.objects.all(),
         empty_label="New Participant",
         required=False
