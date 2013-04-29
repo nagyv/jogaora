@@ -25,6 +25,7 @@ class ParticipantListForm(forms.Form):
     paid = forms.DecimalField(required=False, max_digits=7, decimal_places=2)
 
     def clean(self):
+        # TODO órán: fix this
         cleaned_data = super(ParticipantListForm, self).clean()
         if getattr(cleaned_data['participant'], 'active_season_ticket', False):
             return cleaned_data
