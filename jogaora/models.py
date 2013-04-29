@@ -1,19 +1,46 @@
 import datetime
 from django.db import models
 
+from model_utils import TimeStampedModel
 
-class Participant(models.Model):
-    # TODO: add optional nickname
+
+class PrepaidParticipantManager(models.Manager):
+
+    def get_query_set(self):
+        """ TODO: Return only the participants with an active season ticket """
+        qs = super(PrepaidParticipantManager, self).get_query_set()
+        return qs.filter(
+            seasonticket__start_date__lte=datetime.date.today(), seasonticket__end_date__gte=datetime.date.today()
+        )
+
+
+class ActiveParticipantManager(models.Manager):
+    """ Returns the participants either with an active season ticket
+    or who were on a session in the past two weeks"""
+
+    def get_query_set(self):
+        # TODO: write this
+        return super(PrepaidParticipantManager, self).get_query_set()
+
+
+class Participant(TimeStampedModel):
     name = models.CharField(max_length=255)
+    nick = models.CharField(max_length=255, blank=True)
     email = models.EmailField()
 
+    objects = models.Manager()
+    with_seasonticket = PrepaidParticipantManager()
+    active = ActiveParticipantManager()
+
     def _get_active_season_ticket(self):
-        # TODO: fix this to return the last active season ticket or None
-        return None
+        try:
+            return self.seasonticket_set.filter(start_date__lte=datetime.date.today(), end_date__gte=datetime.date.today()).order_by('-end_date')[0]
+        except IndexError:
+            return None
     active_season_ticket = property(_get_active_season_ticket)
 
     def __unicode__(self):
-        return self.name
+        return self.nick if self.nick else self.name
 
     @models.permalink
     def get_absolute_url(self):
@@ -41,7 +68,7 @@ class Session(models.Model):
             paid=paid)
 
 
-class SeasonTicket(models.Model):
+class SeasonTicket(TimeStampedModel): # TODO: rewrite with model_utils: TimeFramedModel
     participant = models.ForeignKey(Participant)
     start_date = models.DateField(default=lambda: datetime.date.today())
     end_date = models.DateField(default=lambda: datetime.date.today()+datetime.timedelta(days=30))
@@ -55,7 +82,7 @@ class SeasonTicket(models.Model):
         return ('season_tickets', (), {'pk': self.pk})
 
 
-class SessionParticipant(models.Model):
+class SessionParticipant(TimeStampedModel):
     participant = models.ForeignKey(Participant)
     session = models.ForeignKey(Session)
     season_ticket = models.ForeignKey(SeasonTicket, null=True)

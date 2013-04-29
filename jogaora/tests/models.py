@@ -62,3 +62,24 @@ class SeasonTicketTest(TestCase):
         self.assertEqual(ticket.pk, 1)
         self.assertEqual(ticket.start_date, datetime.date.today())
         self.assertEqual((ticket.end_date - ticket.start_date).days, 30)
+
+
+class PrepaidParticipantManagerTest(TestCase):
+
+    def setUp(self):
+        self.active = Participant.objects.create(name='Prepaid')
+        self.inactive = Participant.objects.create(name='Inactive')
+
+    def test_get_query_set(self):
+        SeasonTicket.objects.create(
+            participant=self.active,
+            paid=8000)
+        qs = Participant.with_seasonticket.all()
+        self.assertEqual(qs.count(), 1)
+        self.assertEqual(qs[0].pk, self.active.pk)
+
+
+class ActiveParticipantManagerTest(TestCase):
+
+    def test_get_query_set(self):
+        raise NotImplementedError
