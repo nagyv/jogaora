@@ -19,8 +19,10 @@ class ActiveParticipantManager(models.Manager):
     or who were on a session in the past two weeks"""
 
     def get_query_set(self):
-        # TODO: write this
-        return super(PrepaidParticipantManager, self).get_query_set()
+        qs = super(ActiveParticipantManager, self).get_query_set()
+        active_participant = models.Q(sessionparticipant__created__gte=datetime.date.today()-datetime.timedelta(days=12))
+        with_seasonticket = models.Q(seasonticket__end_date__gte=datetime.date.today(), seasonticket__start_date__lte=datetime.date.today())
+        return qs.filter( active_participant | with_seasonticket )
 
 
 class Participant(TimeStampedModel):

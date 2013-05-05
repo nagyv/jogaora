@@ -81,5 +81,24 @@ class PrepaidParticipantManagerTest(TestCase):
 
 class ActiveParticipantManagerTest(TestCase):
 
-    def test_get_query_set(self):
-        raise NotImplementedError
+    def test_inactive(self):
+        participant = Participant.objects.create(
+            name='New Participant',
+            email='me@example.com')
+        self.assertEqual(Participant.active.count(), 0)
+
+    def test_for_prepaid(self):
+        participant = Participant.objects.create(
+            name='New Participant',
+            email='me@example.com')
+        st = participant.seasonticket_set.create(paid=8000)
+        self.assertEqual(Participant.active.count(), 1)
+        
+
+    def test_for_active(self):
+        participant = Participant.objects.create(
+            name='New Participant',
+            email='me@example.com')
+        session = Session.objects.create(name='Ma, itt')
+        session.participant_add(participant=participant, paid=900)
+        self.assertEqual(Participant.active.count(), 1)
