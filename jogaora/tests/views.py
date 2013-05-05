@@ -22,3 +22,15 @@ class APITest(TestCase):
         data = json.loads(resp.content)
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]["id"], self.session1.pk)
+
+class AddParticipantToSessionTest(TestCase):
+
+    def setUp(self):
+        self.session1 = Session.objects.create(name='Ma, itt')
+
+    def test_context(self):
+        resp = self.client.get(reverse('session_add_participant', args=(), kwargs={'pk': self.session1.pk}))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue('form' in resp.context_data)
+        self.assertTrue('session' in resp.context_data)
+        self.assertEqual(resp.context_data['session'], self.session1)

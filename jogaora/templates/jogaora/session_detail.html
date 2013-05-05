@@ -1,0 +1,7 @@
+<h2>{{object.name}}</h2>
+<ul>
+	{% for p in object.participants.all %}
+	<li>p</li>
+	{% endfor %}
+</ul>
+<a href="{% url "session_add_participant" pk=object.pk %}">New Participant</a>

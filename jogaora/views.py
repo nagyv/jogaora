@@ -2,7 +2,7 @@
 # TODO: write the missing templates
 
 from django.core.urlresolvers import reverse
-from django.views.generic import ListView, CreateView, FormView
+from django.views.generic import ListView, CreateView, FormView, DetailView
 from rest_framework.generics import ListAPIView
 
 from .models import Participant, Session, SeasonTicket
@@ -25,6 +25,10 @@ class ListSession(ListView):
     model = Session
 
 
+class ShowSession(DetailView):
+    model = Session
+
+
 class APIListSession(ListAPIView):
     model = Session
 
@@ -41,7 +45,6 @@ class APIListSession(ListAPIView):
 
 
 class AddParticipantToSession(FormView):
-    # TODO extra: Try to write this
     template_name = 'jogaora/participant_to_session.html'
     form_class = ParticipantListForm
 
@@ -52,6 +55,7 @@ class AddParticipantToSession(FormView):
         ctx = super(AddParticipantToSession, self).get_context_data(form=form)
         ctx['session'] = Session.objects.get(**self.kwargs)
         return ctx
+
 
 class CreateSeasonTicket(CreateView):
     model = SeasonTicket
