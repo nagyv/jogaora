@@ -1,7 +1,7 @@
 import datetime
 from django.db import models
 
-from model_utils import TimeStampedModel
+from model_utils.models import TimeStampedModel
 
 
 class PrepaidParticipantManager(models.Manager):
