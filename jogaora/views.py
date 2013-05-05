@@ -1,9 +1,6 @@
-# TODO: write a view to list session data (ShowSession)
-# TODO: write the missing templates
-
 from django.core.urlresolvers import reverse
 from django.views.generic import ListView, CreateView, FormView, DetailView
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 from .models import Participant, Session, SeasonTicket
 from .forms import ParticipantListForm, SessionForm
@@ -29,21 +26,6 @@ class ShowSession(DetailView):
     model = Session
 
 
-class APIListSession(ListAPIView):
-    model = Session
-
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = super(APIListSession, self).get_queryset()
-        name = self.request.QUERY_PARAMS.get('name', None)
-        if name is not None:
-            queryset = queryset.filter(name__istartswith=name)
-        return queryset
-
-
 class AddParticipantToSession(FormView):
     template_name = 'jogaora/participant_to_session.html'
     form_class = ParticipantListForm
@@ -59,3 +41,36 @@ class AddParticipantToSession(FormView):
 
 class CreateSeasonTicket(CreateView):
     model = SeasonTicket
+
+
+class APIListSession(ListAPIView):
+    model = Session
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        queryset = super(APIListSession, self).get_queryset()
+        name = self.request.QUERY_PARAMS.get('name', None)
+        if name is not None:
+            queryset = queryset.filter(name__istartswith=name)
+        return queryset
+
+
+class APIShowSession(RetrieveAPIView):
+    model = Session
+
+
+class APIListParticipant(ListAPIView):
+    model = Participant
+
+    def get_queryset(self):
+        """
+        Return only the active participants
+        """
+        return Participant.active.all()
+
+
+class APIShowParticipant(RetrieveAPIView):
+    model = Participant

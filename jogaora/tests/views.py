@@ -1,8 +1,9 @@
 import json
+from mock import MagicMock
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from .models import Session
+from ..models import Session, Participant, ActiveParticipantManager
 
 
 class APITest(TestCase):
@@ -22,6 +23,18 @@ class APITest(TestCase):
         data = json.loads(resp.content)
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]["id"], self.session1.pk)
+
+    def test_list_participant(self):
+        Participant.active = MagicMock(spec=ActiveParticipantManager)
+        participant = Participant.objects.create(
+            name='New Participant',
+            email='me@example.com')
+        st = participant.seasonticket_set.create(paid=8000)
+        resp = self.client.get(reverse("api_participants"))
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.content)
+        self.assertTrue(Participant.active.all.call_count, 1)
+
 
 class AddParticipantToSessionTest(TestCase):
 
